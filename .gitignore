@@ -1,0 +1,103 @@
+# ==========================================
+# FixoBoard MMS - Security & Git Ignore
+# ==========================================
+
+# 1. Environment & Secret Credentials (CRITICAL - DO NOT COMMIT)
+.env
+.env.*
+!.env.example
+*.env
+backend/.env
+backend/.env.*
+frontend/.env
+frontend/.env.*
+*.pem
+*.key
+*.cert
+*.crt
+id_rsa
+id_rsa.pub
+credentials.json
+secrets.json
+
+# 2. Local Database & SQLite Files
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+fixoboard.db
+backend/fixoboard.db
+
+# 3. User Uploads & Media (Preserve .gitkeep)
+uploads/*
+!uploads/.gitkeep
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# 4. Python Environment & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# 5. Node.js & Frontend Build Artifacts
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+.npm/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# 6. Operating System & IDE Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.sublime-project
+*.sublime-workspace
+.antigravity/
+.gemini/
+scratch/

@@ -1,0 +1,13 @@
+{
+  "name": "fixoboard-mms",
+  "version": "1.0.0",
+  "description": "FixoBoard Manufacturing Management System",
+  "private": true,
+  "scripts": {
+    "dev": "npx -y concurrently -k -p \"[{name}]\" -n \"BACKEND,FRONTEND\" -c \"blue.bold,green.bold\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "python -m uvicorn app.main:app --reload --port 8000 --app-dir backend",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "test": "pytest"
+  }
+}

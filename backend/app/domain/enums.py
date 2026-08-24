@@ -1,0 +1,82 @@
+from enum import Enum
+
+
+class OrderSource(str, Enum):
+    MANUAL = "MANUAL"
+    CAT = "CAT"
+    EMAIL = "EMAIL"
+    PHONE = "PHONE"
+    EDI = "EDI"
+    OTHER = "OTHER"
+
+
+class OrderPriority(str, Enum):
+    LOW = "LOW"
+    NORMAL = "NORMAL"
+    HIGH = "HIGH"
+    URGENT = "URGENT"
+
+
+class SalesOrderStatus(str, Enum):
+    DRAFT = "DRAFT"
+    SUBMITTED = "SUBMITTED"
+    UNDER_REVIEW = "UNDER_REVIEW"
+    APPROVED = "APPROVED"
+    REJECTED = "REJECTED"
+    CANCELLED = "CANCELLED"
+    PARTIALLY_PRODUCTION = "PARTIALLY_PRODUCTION"
+    IN_PRODUCTION = "IN_PRODUCTION"
+    PARTIALLY_DISPATCHED = "PARTIALLY_DISPATCHED"
+    COMPLETED = "COMPLETED"
+
+
+class ProductionMemoStatus(str, Enum):
+    DRAFT = "DRAFT"
+    APPROVED = "APPROVED"
+    PLANNED = "PLANNED"
+    MACHINE_ASSIGNED = "MACHINE_ASSIGNED"
+    RELEASED = "RELEASED"
+    IN_PROGRESS = "IN_PROGRESS"
+    PAUSED = "PAUSED"
+    COMPLETED = "COMPLETED"
+    CANCELLED = "CANCELLED"
+
+
+class MachineStatus(str, Enum):
+    AVAILABLE = "AVAILABLE"
+    RUNNING = "RUNNING"
+    IDLE = "IDLE"
+    MAINTENANCE = "MAINTENANCE"
+    OFFLINE = "OFFLINE"
+
+
+class ProductionRunStatus(str, Enum):
+    IN_PROGRESS = "IN_PROGRESS"
+    PAUSED = "PAUSED"
+    COMPLETED = "COMPLETED"
+    CANCELLED = "CANCELLED"
+
+
+class PackingStatus(str, Enum):
+    PENDING = "PENDING"
+    IN_PROGRESS = "IN_PROGRESS"
+    COMPLETED = "COMPLETED"
+    REJECTED = "REJECTED"
+
+
+class DispatchStatus(str, Enum):
+    DRAFT = "DRAFT"
+    READY = "READY"
+    LOADING = "LOADING"
+    DISPATCHED = "DISPATCHED"
+    CANCELLED = "CANCELLED"
+
+
+class SystemRole(str, Enum):
+    MAIN_HEAD = "MAIN_HEAD"
+    SALES = "SALES"
+    PRODUCTION = "PRODUCTION"
+    PACKING = "PACKING"
+    DISPATCH = "DISPATCH"
+    ADMIN = "ADMIN"
+    OPERATOR = "OPERATOR"

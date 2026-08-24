@@ -1,0 +1,86 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: fixoboard-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-fixo_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-fixo_secure_password_2026}
+      POSTGRES_DB: ${POSTGRES_DB:-fixoboard_mms}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - fixoboard-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-fixo_admin} -d ${POSTGRES_DB:-fixoboard_mms}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: fixoboard-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ENVIRONMENT: production
+      PROJECT_NAME: "FixoBoard MMS"
+      API_V1_STR: /api/v1
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-fixo_admin}:${POSTGRES_PASSWORD:-fixo_secure_password_2026}@postgres:5432/${POSTGRES_DB:-fixoboard_mms}
+      JWT_SECRET: ${JWT_SECRET:-supersecret_fixoboard_production_key_change_in_env_2026_xyz}
+      JWT_ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 1440
+      LOCAL_UPLOAD_DIR: /app/uploads
+      AI_PO_EXTRACTOR_ENABLED: "True"
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-1.5-flash}
+      BACKEND_CORS_ORIGINS: '["http://localhost", "http://localhost:3000", "http://localhost:80", "http://127.0.0.1:3000", "http://localhost:8000"]'
+    ports:
+      - "8000:8000"
+    volumes:
+      - backend_uploads:/app/uploads
+    networks:
+      - fixoboard-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:8000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: fixoboard-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "3000:80"
+    networks:
+      - fixoboard-net
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://127.0.0.1:80/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  postgres_data:
+    driver: local
+  backend_uploads:
+    driver: local
+
+networks:
+  fixoboard-net:
+    driver: bridge
