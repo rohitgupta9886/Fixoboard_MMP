@@ -470,31 +470,38 @@ INSTRUCTIONS FOR OUTPUT FORMATTING & READABILITY:
 5. When recommending PVC/WPC products, explicitly specify the exact thickness, density grade, price range, and verified advantages over plywood.
 6. Provide crisp, professional, and directly actionable insights for plant operations and commercial decisions.
 """
-        model_name = settings.GEMINI_MODEL or "gemini-1.5-flash"
+        primary_model = settings.GEMINI_MODEL or "gemini-2.5-flash"
+        candidate_models = [primary_model]
+        for fallback_m in ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.5-pro", "gemini-1.5-flash"]:
+            if fallback_m not in candidate_models:
+                candidate_models.append(fallback_m)
         
-        # 1. Try Gemini REST API via httpx (async)
-        try:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
-            payload = {
-                "contents": [
-                    {
-                        "parts": [
-                            {"text": f"{system_prompt}\n\nUser Question: {user_query}"}
-                        ]
-                    }
-                ]
-            }
-            async with httpx.AsyncClient(timeout=4.0) as client:
-                resp = await client.post(url, json=payload)
-                if resp.status_code == 200:
-                    data = resp.json()
-                    candidates = data.get("candidates", [])
-                    if candidates:
-                        parts = candidates[0].get("content", {}).get("parts", [])
-                        if parts and "text" in parts[0]:
-                            return parts[0]["text"].strip()
-        except Exception as ex:
-            logger.warning(f"Gemini REST API call failed: {ex}")
+        # Try Gemini REST API via httpx (async) with candidate model cascade
+        for model_name in candidate_models:
+            try:
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+                payload = {
+                    "contents": [
+                        {
+                            "parts": [
+                                {"text": f"{system_prompt}\n\nUser Question: {user_query}"}
+                            ]
+                        }
+                    ]
+                }
+                async with httpx.AsyncClient(timeout=6.0) as client:
+                    resp = await client.post(url, json=payload)
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        candidates = data.get("candidates", [])
+                        if candidates:
+                            parts = candidates[0].get("content", {}).get("parts", [])
+                            if parts and "text" in parts[0]:
+                                return parts[0]["text"].strip()
+                    else:
+                        logger.warning(f"Gemini API model {model_name} returned HTTP {resp.status_code}: {resp.text[:120]}")
+            except Exception as ex:
+                logger.warning(f"Gemini API call with {model_name} failed: {ex}")
 
         return None
 

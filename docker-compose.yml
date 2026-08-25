@@ -40,7 +40,7 @@ services:
       AI_PO_EXTRACTOR_ENABLED: "True"
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
-      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-1.5-flash}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
       BACKEND_CORS_ORIGINS: '["http://localhost", "http://localhost:3000", "http://localhost:80", "http://127.0.0.1:3000", "http://localhost:8000"]'
     ports:
       - "8000:8000"

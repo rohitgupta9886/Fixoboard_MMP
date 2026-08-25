@@ -22,7 +22,7 @@ class AiPoExtractionService:
 
     def __init__(self):
         self.api_key = settings.GEMINI_API_KEY or settings.GOOGLE_API_KEY or os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
-        self.model = settings.GEMINI_MODEL or "gemini-1.5-flash"
+        self.model = settings.GEMINI_MODEL or "gemini-2.5-flash"
 
     async def extract_po_draft(
         self,
@@ -102,7 +102,7 @@ class AiPoExtractionService:
             "}"
         )
 
-        candidate_models = [self.model, "gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"]
+        candidate_models = [self.model, "gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.5-pro", "gemini-1.5-flash"]
         headers = {"Content-Type": "application/json"}
 
         for model_name in candidate_models:

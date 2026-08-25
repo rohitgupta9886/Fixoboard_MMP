@@ -51,7 +51,7 @@ class Settings(BaseSettings):
     AI_PO_EXTRACTOR_ENABLED: bool = True
     GEMINI_API_KEY: Optional[str] = None
     GOOGLE_API_KEY: Optional[str] = None
-    GEMINI_MODEL: str = "gemini-1.5-flash"
+    GEMINI_MODEL: str = "gemini-2.5-flash"
 
     @field_validator("DATABASE_URL", mode="before")
     @classmethod
