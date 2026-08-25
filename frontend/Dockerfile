@@ -17,11 +17,12 @@ RUN npm run build
 FROM nginx:alpine
 
 ENV PORT=80
+ENV NGINX_ENVSUBST_FILTER="PORT"
 
 # Copy built assets to Nginx html directory
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Use template directory for automatic envsubst of $PORT on container startup
+# Use template directory for automatic envsubst of ONLY $PORT on container startup
 COPY nginx.conf /etc/nginx/templates/default.conf.template
 
 # Health check
