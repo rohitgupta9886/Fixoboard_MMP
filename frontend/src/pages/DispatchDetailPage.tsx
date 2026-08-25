@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient } from '../api/client';
+import { apiClient, getFullApiUrl } from '../api/client';
 import { Dispatch } from '../types';
 import { Card } from '../components/common/Card';
 import { StatusBadge } from '../components/common/StatusBadge';
@@ -47,7 +47,7 @@ export const DispatchDetailPage: React.FC = () => {
   });
 
   const handlePrintPdf = () => {
-    window.open(`/api/v1/dispatches/${id}/pdf`, '_blank');
+    window.open(getFullApiUrl(`/api/v1/dispatches/${id}/pdf`), '_blank');
   };
 
   if (isLoading) {

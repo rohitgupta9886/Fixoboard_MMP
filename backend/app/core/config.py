@@ -1,7 +1,13 @@
 import os
 from typing import List, Union, Optional
-from pydantic import AnyHttpUrl, field_validator
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# Compute paths outside f-strings to prevent SyntaxError in Python <=3.11
+_BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+_DEFAULT_DB_FILE = os.path.join(_BASE_DIR, "fixoboard.db").replace("\\", "/")
+_DEFAULT_DATABASE_URL = f"sqlite+aiosqlite:///{_DEFAULT_DB_FILE}"
+_DEFAULT_UPLOAD_DIR = os.path.join(_BASE_DIR, "uploads")
 
 
 class Settings(BaseSettings):
@@ -15,6 +21,7 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
     PROJECT_NAME: str = "FixoBoard MMS"
     API_V1_STR: str = "/api/v1"
+    PORT: int = 8000
     
     # Security & Tokens
     JWT_SECRET: str = "supersecret_fixoboard_production_key_change_in_env_2026_xyz"
@@ -23,7 +30,7 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
     # CORS
-    BACKEND_CORS_ORIGINS: List[str] = [
+    BACKEND_CORS_ORIGINS: Union[List[str], str] = [
         "http://localhost:3000",
         "http://localhost:5173",
         "http://localhost:8000",
@@ -33,23 +40,65 @@ class Settings(BaseSettings):
     ]
 
     # Database
-    DATABASE_URL: str = os.getenv(
-        "DATABASE_URL",
-        f"sqlite+aiosqlite:///{os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'fixoboard.db').replace('\\', '/')}"
-    )
+    DATABASE_URL: str = _DEFAULT_DATABASE_URL
     
     # File Storage
     STORAGE_BACKEND: str = "local"
-    LOCAL_UPLOAD_DIR: str = os.getenv(
-        "LOCAL_UPLOAD_DIR",
-        os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "uploads")
-    )
+    LOCAL_UPLOAD_DIR: str = _DEFAULT_UPLOAD_DIR
 
     # AI PO Extraction & Google Gemini Vision Settings
     AI_PO_EXTRACTOR_ENABLED: bool = True
-    GEMINI_API_KEY: Optional[str] = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
-    GOOGLE_API_KEY: Optional[str] = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
-    GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+    GEMINI_API_KEY: Optional[str] = None
+    GOOGLE_API_KEY: Optional[str] = None
+    GEMINI_MODEL: str = "gemini-1.5-flash"
+
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def assemble_db_connection(cls, v: Optional[str]) -> str:
+        if not v or not isinstance(v, str) or not v.strip():
+            return _DEFAULT_DATABASE_URL
+        url = v.strip()
+        # Automatically transform Render/Heroku postgres:// or standard postgresql:// to postgresql+asyncpg://
+        if url.startswith("postgres://"):
+            url = url.replace("postgres://", "postgresql+asyncpg://", 1)
+        elif url.startswith("postgresql://") and not url.startswith("postgresql+asyncpg://"):
+            url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return url
+
+    @field_validator("BACKEND_CORS_ORIGINS", mode="before")
+    @classmethod
+    def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
+        if isinstance(v, str):
+            v_stripped = v.strip()
+            if v_stripped.startswith("[") and v_stripped.endswith("]"):
+                import json
+                try:
+                    return json.loads(v_stripped)
+                except Exception:
+                    pass
+            # Split comma-separated string
+            return [origin.strip() for origin in v_stripped.split(",") if origin.strip()]
+        elif isinstance(v, (list, set)):
+            return list(v)
+        return [
+            "http://localhost:3000",
+            "http://localhost:5173",
+            "http://localhost:8000",
+            "http://127.0.0.1:3000",
+            "http://127.0.0.1:5173",
+            "http://127.0.0.1:8000",
+        ]
+
+    @field_validator("JWT_SECRET")
+    @classmethod
+    def validate_jwt_secret(cls, v: str, info) -> str:
+        env = info.data.get("ENVIRONMENT", "development")
+        if env == "production" and (not v or v == "supersecret_fixoboard_production_key_change_in_env_2026_xyz" or len(v) < 16):
+            raise ValueError(
+                "CRITICAL SECURITY CONFIGURATION: In production mode, a secure custom JWT_SECRET environment variable "
+                "(at least 16 characters) must be configured in Render environment variables."
+            )
+        return v
 
 
 settings = Settings()

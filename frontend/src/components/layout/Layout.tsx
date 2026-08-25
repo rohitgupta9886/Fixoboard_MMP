@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
+import { BottomNav } from './BottomNav';
 import { CommandPalette } from '../common/CommandPalette';
 import { NotificationDrawer } from '../common/NotificationDrawer';
 import { AiAdvisorModal } from '../common/AiAdvisorModal';
@@ -26,8 +27,8 @@ export const Layout: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex bg-surface-base dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-200 selection:bg-blue-600 selection:text-white">
-      {/* Sidebar */}
+    <div className="min-h-screen flex bg-surface-base dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-200 selection:bg-blue-600 selection:text-white antialiased">
+      {/* Sidebar (Desktop Sidebar + Mobile Slide-out Drawer) */}
       <Sidebar
         isOpenMobile={isOpenMobile}
         onCloseMobile={() => setIsOpenMobile(false)}
@@ -45,11 +46,17 @@ export const Layout: React.FC = () => {
           onOpenAiAdvisor={() => setIsAiAdvisorOpen(true)}
         />
 
-        {/* Dynamic Page Router Outlet */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-[1600px] w-full mx-auto">
+        {/* Dynamic Page Router Outlet with Safe-Area Mobile Bottom Offset */}
+        <main className="flex-1 overflow-y-auto p-3.5 sm:p-6 lg:p-8 max-w-[1600px] w-full mx-auto pb-24 lg:pb-8">
           <Outlet />
         </main>
       </div>
+
+      {/* Mobile Bottom Navigation Bar */}
+      <BottomNav
+        onOpenMobileMenu={() => setIsOpenMobile(true)}
+        onOpenAiAdvisor={() => setIsAiAdvisorOpen(true)}
+      />
 
       {/* Omnibar Command Palette */}
       <CommandPalette

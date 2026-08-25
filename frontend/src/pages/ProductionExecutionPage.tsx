@@ -279,7 +279,7 @@ export const ProductionExecutionPage: React.FC = () => {
 
       {/* Main Grid: Job Selector & Live Work Order Card */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left: Job Selector (4 cols) */}
+        {/* Left: Job Selector (Horizontal strip on mobile, 4-col card on desktop) */}
         <div className="lg:col-span-4 space-y-4">
           <Card padding="md">
             <CardHeader
@@ -288,7 +288,49 @@ export const ProductionExecutionPage: React.FC = () => {
               icon={<Layers className="w-4 h-4" />}
             />
 
-            <div className="space-y-2.5 mt-4 max-h-[460px] overflow-y-auto pr-1">
+            {/* Mobile Horizontal Work Order Chips */}
+            <div className="flex lg:hidden overflow-x-auto gap-2.5 pt-3 pb-1 no-scrollbar -mx-1 px-1">
+              {isMemosLoading ? (
+                <div className="p-3 text-center text-xs text-slate-400 font-medium">Loading work orders...</div>
+              ) : memos.length === 0 ? (
+                <div className="p-3 text-center text-xs text-slate-400 font-medium">No work orders queued.</div>
+              ) : (
+                memos.map((memo: any) => {
+                  const isSelected = (currentMemo?.id || '') === memo.id;
+                  return (
+                    <button
+                      key={memo.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedMemoId(memo.id);
+                        setStatusMessage(null);
+                      }}
+                      className={`shrink-0 p-3 rounded-2xl border text-left transition-all min-w-[200px] touch-manipulation ${
+                        isSelected
+                          ? 'bg-blue-50 dark:bg-blue-950/70 border-blue-500 shadow-glow-brand/20 ring-2 ring-blue-500/20'
+                          : 'bg-white dark:bg-slate-850/80 border-slate-200 dark:border-slate-800'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-1.5 mb-1">
+                        <span className="font-num font-bold text-xs text-slate-900 dark:text-slate-100 truncate">
+                          {memo.memo_number || 'PM-' + memo.id.slice(0, 8)}
+                        </span>
+                        <StatusBadge status={memo.status} size="sm" />
+                      </div>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400 flex justify-between">
+                        <span>{memo.planned_quantity || memo.target_quantity || 0} Sheets</span>
+                        <span className="font-bold text-blue-600 dark:text-blue-400">
+                          {memo.target_machine?.line_name || memo.machine?.line_name || 'Line 1'}
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })
+              )}
+            </div>
+
+            {/* Desktop Vertical List */}
+            <div className="hidden lg:block space-y-2.5 mt-4 max-h-[460px] overflow-y-auto pr-1">
               {isMemosLoading ? (
                 <div className="p-6 text-center text-xs text-slate-400 font-medium">Loading work orders...</div>
               ) : memos.length === 0 ? (
@@ -411,39 +453,39 @@ export const ProductionExecutionPage: React.FC = () => {
             </div>
 
             {/* Big 3 Digits Display: Target, Good Output, Purge Scrap */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 py-6">
-              <div className="p-5 rounded-2xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900 text-center space-y-1 shadow-2xs">
-                <span className="text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-blue-300 block">
-                  Target Batch
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 py-4 sm:py-6">
+              <div className="p-3 sm:p-5 rounded-2xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900 text-center space-y-0.5 sm:space-y-1 shadow-2xs">
+                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-blue-300 block truncate">
+                  Target
                 </span>
-                <span className="text-4xl sm:text-5xl font-extrabold font-num text-slate-900 dark:text-white block">
+                <span className="text-2xl sm:text-5xl font-extrabold font-num text-slate-900 dark:text-white block">
                   {targetQuantity}
                 </span>
-                <span className="text-[11px] text-slate-500 font-bold uppercase">
+                <span className="text-[10px] sm:text-[11px] text-slate-500 font-bold uppercase">
                   Sheets
                 </span>
               </div>
 
-              <div className="p-5 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900 text-center space-y-1 shadow-2xs">
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 block">
-                  Good Prime Output
+              <div className="p-3 sm:p-5 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900 text-center space-y-0.5 sm:space-y-1 shadow-2xs">
+                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 block truncate">
+                  Good Prime
                 </span>
-                <span className="text-4xl sm:text-5xl font-extrabold font-num text-emerald-600 dark:text-emerald-400 block">
+                <span className="text-2xl sm:text-5xl font-extrabold font-num text-emerald-600 dark:text-emerald-400 block">
                   {goodOutput}
                 </span>
-                <span className="text-[11px] text-slate-500 font-bold uppercase">
-                  {progressPct}% Completed
+                <span className="text-[10px] sm:text-[11px] text-emerald-600 dark:text-emerald-400 font-bold uppercase">
+                  {progressPct}%
                 </span>
               </div>
 
-              <div className="p-5 rounded-2xl bg-amber-50/70 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 text-center space-y-1 shadow-2xs">
-                <span className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300 block">
-                  Purge Scrap
+              <div className="p-3 sm:p-5 rounded-2xl bg-amber-50/70 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 text-center space-y-0.5 sm:space-y-1 shadow-2xs">
+                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300 block truncate">
+                  Scrap
                 </span>
-                <span className="text-4xl sm:text-5xl font-extrabold font-num text-amber-600 dark:text-amber-400 block">
+                <span className="text-2xl sm:text-5xl font-extrabold font-num text-amber-600 dark:text-amber-400 block">
                   {scrapWeight}
                 </span>
-                <span className="text-[11px] text-slate-500 font-bold uppercase">
+                <span className="text-[10px] sm:text-[11px] text-amber-600 dark:text-amber-400 font-bold uppercase">
                   Kg Recyclable
                 </span>
               </div>

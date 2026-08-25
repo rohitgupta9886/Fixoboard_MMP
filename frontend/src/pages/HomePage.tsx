@@ -159,18 +159,18 @@ export const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-surface-base text-slate-900 selection:bg-blue-600 selection:text-white font-sans antialiased overflow-x-hidden">
       {/* 1. TOP STICKY NAVBAR */}
-      <nav className="sticky top-0 z-50 bg-white/90 dark:bg-navy-950/90 backdrop-blur-md border-b border-slate-200/80 dark:border-navy-800 px-6 py-3.5 transition-colors">
+      <nav className="sticky top-0 z-50 bg-white/90 dark:bg-navy-950/90 backdrop-blur-md border-b border-slate-200/80 dark:border-navy-800 px-3.5 sm:px-6 py-3 transition-colors">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-white px-3 py-1.5 rounded-xl shadow-xs flex items-center justify-center border border-slate-200">
-              <img src="/logo.png" alt="FixoBoard Logo" className="h-10 sm:h-11 w-auto object-contain" />
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="bg-white px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl shadow-xs flex items-center justify-center border border-slate-200">
+              <img src="/logo.png" alt="FixoBoard Logo" className="h-8 sm:h-11 w-auto object-contain" />
             </div>
             <div>
               <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 block tracking-wider uppercase font-bold">
                 ● Factory OS Live
               </span>
-              <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block tracking-tight uppercase">
-                Manufacturing Management System
+              <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block tracking-tight uppercase truncate max-w-[160px] sm:max-w-none">
+                Manufacturing System
               </span>
             </div>
           </div>
@@ -193,7 +193,7 @@ export const HomePage: React.FC = () => {
             </a>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Button
               variant="secondary"
               size="sm"
@@ -208,45 +208,45 @@ export const HomePage: React.FC = () => {
               onClick={() => navigate('/dashboard')}
               rightIcon={<ArrowRight className="w-4 h-4" />}
             >
-              Launch Platform
+              Platform
             </Button>
           </div>
         </div>
       </nav>
 
       {/* 2. HERO SECTION */}
-      <section className="relative pt-16 pb-24 md:pt-24 md:pb-32 overflow-hidden bg-gradient-to-b from-white via-blue-50/40 to-surface-base dark:from-navy-950 dark:via-navy-900 dark:to-navy-950">
+      <section className="relative pt-12 pb-20 md:pt-24 md:pb-32 overflow-hidden bg-gradient-to-b from-white via-blue-50/40 to-surface-base dark:from-navy-950 dark:via-navy-900 dark:to-navy-950">
         {/* Ambient Glows */}
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-400/10 dark:bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute top-10 right-1/4 w-96 h-96 bg-indigo-500/10 dark:bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <div className="text-center max-w-3xl mx-auto space-y-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+          <div className="text-center max-w-3xl mx-auto space-y-5 sm:space-y-6">
             {/* Top Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/60 border border-blue-200/80 dark:border-blue-800 text-xs font-bold text-blue-700 dark:text-blue-300 shadow-2xs">
               <Layers className="w-3.5 h-3.5 text-blue-600" />
               <span>Next-Gen Smart Factory &amp; MES Core</span>
             </div>
 
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.08]">
+            <h1 className="text-3xl sm:text-6xl lg:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.08]">
               Manufacturing,{' '}
               <span className="bg-gradient-to-r from-brand-indigo via-brand-blue to-sky-500 bg-clip-text text-transparent">
                 Connected.
               </span>
             </h1>
 
-            <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+            <p className="text-sm sm:text-xl text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
               One intelligent platform to manage orders, production, packing and dispatch —
               from one powerful, real-time industrial workspace.
             </p>
 
-            <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-2 sm:pt-4">
               <Button
                 variant="primary"
                 size="lg"
                 onClick={() => navigate('/dashboard')}
                 rightIcon={<ArrowRight className="w-5 h-5" />}
-                className="shadow-soft hover:shadow-soft-hover"
+                className="w-full sm:w-auto shadow-soft hover:shadow-soft-hover"
               >
                 Explore Platform
               </Button>
@@ -258,6 +258,7 @@ export const HomePage: React.FC = () => {
                   el?.scrollIntoView({ behavior: 'smooth' });
                 }}
                 leftIcon={<Play className="w-4 h-4 text-blue-600 fill-blue-600" />}
+                className="w-full sm:w-auto"
               >
                 See How It Works
               </Button>

@@ -19,7 +19,13 @@ import {
   AIAdvisorResponse,
 } from '../types';
 
-const BASE_URL = '/api/v1';
+const RAW_API_URL = (import.meta.env.VITE_API_URL || '').trim().replace(/\/$/, '');
+const BASE_URL = `${RAW_API_URL}/api/v1`;
+
+export const getFullApiUrl = (endpoint: string): string => {
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  return `${RAW_API_URL}${cleanEndpoint}`;
+};
 
 class ApiClient {
   private getAuthHeader(): HeadersInit {

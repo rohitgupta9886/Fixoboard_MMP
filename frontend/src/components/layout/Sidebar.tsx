@@ -313,10 +313,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </div>
                 <button
                   onClick={onToggleCollapse}
-                  className="p-2 rounded-xl text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-800 transition-all shadow-2xs border border-slate-200/60 dark:border-slate-700/60 shrink-0"
+                  className="hidden lg:flex p-2 rounded-xl text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-800 transition-all shadow-2xs border border-slate-200/60 dark:border-slate-700/60 shrink-0"
                   title="Collapse Sidebar"
                 >
                   <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={onCloseMobile}
+                  className="lg:hidden p-2 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all touch-target shrink-0 flex items-center justify-center"
+                  aria-label="Close navigation menu"
+                >
+                  <ChevronLeft className="w-5 h-5" />
                 </button>
               </div>
 

@@ -354,55 +354,89 @@ export const PackingPage: React.FC = () => {
             <p>No packaging slips logged yet. Click "Create Packaging Slip" to bundle ready inventory.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto border border-slate-200 dark:border-slate-800 rounded-xl">
-            <table className="w-full text-xs text-left">
-              <thead className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 uppercase font-sans font-bold">
-                <tr>
-                  <th className="p-3.5">Packing Number</th>
-                  <th className="p-3.5">Product Line</th>
-                  <th className="p-3.5">Packing Type</th>
-                  <th className="p-3.5 text-right">Packed Qty</th>
-                  <th className="p-3.5 text-right">Packages</th>
-                  <th className="p-3.5">Packed At</th>
-                  <th className="p-3.5 text-center">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {packingRecords.map((pkg) => (
-                  <tr key={pkg.id} className="hover:bg-slate-50 dark:hover:bg-slate-850/50">
-                    <td className="p-3.5 font-mono font-bold text-blue-600 dark:text-blue-400">
+          <>
+            {/* Mobile Touch Cards */}
+            <div className="grid grid-cols-1 gap-3 md:hidden">
+              {packingRecords.map((pkg) => (
+                <div
+                  key={pkg.id}
+                  className="p-4 rounded-2xl bg-white dark:bg-slate-850/80 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-2.5"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono font-bold text-xs text-blue-600 dark:text-blue-400">
                       {pkg.packing_number}
-                    </td>
-                    <td className="p-3.5">
-                      <span className="font-bold text-slate-900 dark:text-white block">
-                        {pkg.sales_order_item?.product?.product_name || 'PVC Celuka Ply'}
-                      </span>
-                      <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono font-bold">
-                        {pkg.sales_order_item?.thickness?.display_label} • {pkg.sales_order_item?.density?.display_label}
-                      </span>
-                    </td>
-                    <td className="p-3.5">
-                      <span className="font-bold text-slate-800 dark:text-slate-200">
-                        {pkg.packing_type?.name || 'Standard Industrial'}
-                      </span>
-                    </td>
-                    <td className="p-3.5 text-right font-num font-bold text-slate-900 dark:text-white">
-                      {pkg.packed_quantity} Sheets
-                    </td>
-                    <td className="p-3.5 text-right font-num text-slate-600 dark:text-slate-400 font-medium">
-                      {pkg.package_count} Bundles ({pkg.pieces_per_package} pcs/ea)
-                    </td>
-                    <td className="p-3.5 font-num text-slate-500 font-medium">
-                      {new Date(pkg.created_at).toLocaleDateString()}
-                    </td>
-                    <td className="p-3.5 text-center">
-                      <StatusBadge status="READY_FOR_DISPATCH" size="sm" />
-                    </td>
+                    </span>
+                    <StatusBadge status="READY_FOR_DISPATCH" size="sm" />
+                  </div>
+                  <div>
+                    <span className="font-bold text-sm text-slate-900 dark:text-white block">
+                      {pkg.sales_order_item?.product?.product_name || 'PVC Celuka Ply'}
+                    </span>
+                    <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono font-bold">
+                      {pkg.sales_order_item?.thickness?.display_label} • {pkg.sales_order_item?.density?.display_label}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <span className="font-medium">{pkg.packing_type?.name || 'Standard'}</span>
+                    <span className="font-num font-bold text-slate-900 dark:text-white">
+                      {pkg.packed_quantity} Sheets <span className="font-normal text-slate-500">({pkg.package_count} pkgs)</span>
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop Table */}
+            <div className="hidden md:block overflow-x-auto border border-slate-200 dark:border-slate-800 rounded-xl">
+              <table className="w-full text-xs text-left">
+                <thead className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 uppercase font-sans font-bold">
+                  <tr>
+                    <th className="p-3.5">Packing Number</th>
+                    <th className="p-3.5">Product Line</th>
+                    <th className="p-3.5">Packing Type</th>
+                    <th className="p-3.5 text-right">Packed Qty</th>
+                    <th className="p-3.5 text-right">Packages</th>
+                    <th className="p-3.5">Packed At</th>
+                    <th className="p-3.5 text-center">Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {packingRecords.map((pkg) => (
+                    <tr key={pkg.id} className="hover:bg-slate-50 dark:hover:bg-slate-850/50">
+                      <td className="p-3.5 font-mono font-bold text-blue-600 dark:text-blue-400">
+                        {pkg.packing_number}
+                      </td>
+                      <td className="p-3.5">
+                        <span className="font-bold text-slate-900 dark:text-white block">
+                          {pkg.sales_order_item?.product?.product_name || 'PVC Celuka Ply'}
+                        </span>
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono font-bold">
+                          {pkg.sales_order_item?.thickness?.display_label} • {pkg.sales_order_item?.density?.display_label}
+                        </span>
+                      </td>
+                      <td className="p-3.5">
+                        <span className="font-bold text-slate-800 dark:text-slate-200">
+                          {pkg.packing_type?.name || 'Standard Industrial'}
+                        </span>
+                      </td>
+                      <td className="p-3.5 text-right font-num font-bold text-slate-900 dark:text-white">
+                        {pkg.packed_quantity} Sheets
+                      </td>
+                      <td className="p-3.5 text-right font-num text-slate-600 dark:text-slate-400 font-medium">
+                        {pkg.package_count} Bundles ({pkg.pieces_per_package} pcs/ea)
+                      </td>
+                      <td className="p-3.5 font-num text-slate-500 font-medium">
+                        {new Date(pkg.created_at).toLocaleDateString()}
+                      </td>
+                      <td className="p-3.5 text-center">
+                        <StatusBadge status="READY_FOR_DISPATCH" size="sm" />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </Card>
 

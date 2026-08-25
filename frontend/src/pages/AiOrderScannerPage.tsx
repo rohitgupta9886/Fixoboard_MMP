@@ -268,7 +268,7 @@ export const AiOrderScannerPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
             {/* Standard File Upload Button */}
             <input
               type="file"
@@ -283,13 +283,36 @@ export const AiOrderScannerPage: React.FC = () => {
                 }
               }}
             />
+            {/* Direct Camera Capture on Mobile */}
+            <input
+              type="file"
+              accept="image/*"
+              capture="environment"
+              id="camera-input-trigger"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) {
+                  handleFileSelect(f);
+                  processImageScan(f);
+                }
+              }}
+            />
+            <Button
+              variant="secondary"
+              onClick={() => document.getElementById('camera-input-trigger')?.click()}
+              className="flex-1 sm:flex-initial bg-white/20 hover:bg-white/30 text-white border border-white/30 font-semibold px-4 py-2.5"
+            >
+              <Camera className="w-4 h-4 mr-2" />
+              Snap Photo
+            </Button>
             <Button
               variant="primary"
               onClick={() => fileInputRef.current?.click()}
-              className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-lg shadow-purple-500/30 border border-purple-400/30 font-semibold px-5 py-2.5"
+              className="flex-1 sm:flex-initial bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-lg shadow-purple-500/30 border border-purple-400/30 font-semibold px-5 py-2.5"
             >
               <Upload className="w-4 h-4 mr-2" />
-              Upload Order Image / PDF
+              Upload Chit
             </Button>
           </div>
         </div>

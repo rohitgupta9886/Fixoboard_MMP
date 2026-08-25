@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { apiClient } from '../api/client';
+import { apiClient, getFullApiUrl } from '../api/client';
 import { Card } from '../components/common/Card';
 import { StatusBadge } from '../components/common/StatusBadge';
 import { Button } from '../components/common/Button';
@@ -292,7 +292,7 @@ export const DispatchPage: React.FC = () => {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch {
-      window.open(`/api/v1/dispatches/${dispatchId}/pdf`, '_blank');
+      window.open(getFullApiUrl(`/api/v1/dispatches/${dispatchId}/pdf`), '_blank');
     }
   };
 

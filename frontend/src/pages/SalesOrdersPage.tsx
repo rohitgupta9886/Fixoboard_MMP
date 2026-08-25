@@ -147,8 +147,8 @@ export const SalesOrdersPage: React.FC = () => {
         )}
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* KPI Cards (2x2 on mobile, 4-col on desktop) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         <StatCard
           title="Total Orders"
           value={totalOrders}
@@ -158,23 +158,23 @@ export const SalesOrdersPage: React.FC = () => {
           variant="blue"
         />
         <StatCard
-          title="Pending Approval"
+          title="Pending Review"
           value={draftOrders}
           unit="Draft/Review"
-          subtitle="Awaiting credit check"
+          subtitle="Awaiting approval"
           icon={<Clock className="w-4.5 h-4.5" />}
           variant="amber"
         />
         <StatCard
-          title="In Extrusion / Queue"
+          title="In Extrusion"
           value={inProdOrders}
           unit="Active"
-          subtitle="Manufacturing ongoing"
+          subtitle="On plant floor"
           icon={<Cpu className="w-4.5 h-4.5" />}
           variant="indigo"
         />
         <StatCard
-          title="Dispatched / Delivered"
+          title="Dispatched"
           value={dispatchedOrders}
           unit="Orders"
           subtitle="Gate cleared"
@@ -184,8 +184,8 @@ export const SalesOrdersPage: React.FC = () => {
       </div>
 
       {/* Filter Bar */}
-      <div className="flex items-center gap-3 flex-wrap">
-        <div className="w-64">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 flex-wrap">
+        <div className="w-full sm:w-64">
           <Input
             placeholder="Search order #, customer PO..."
             value={search}
@@ -197,7 +197,7 @@ export const SalesOrdersPage: React.FC = () => {
           />
         </div>
 
-        <div className="w-44">
+        <div className="w-full sm:w-44">
           <Select
             options={[
               { value: '', label: 'All Statuses' },
@@ -218,12 +218,12 @@ export const SalesOrdersPage: React.FC = () => {
           />
         </div>
 
-        <div className="w-40">
+        <div className="w-full sm:w-44">
           <Select
             options={[
               { value: '', label: 'All Priorities' },
               { value: 'LOW', label: 'Low' },
-              { value: 'NORMAL', label: 'Normal' },
+              { value: 'MEDIUM', label: 'Medium' },
               { value: 'HIGH', label: 'High' },
               { value: 'URGENT', label: 'Urgent' },
             ]}
@@ -236,13 +236,36 @@ export const SalesOrdersPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Orders Table */}
+      {/* Data Table with Dual Mobile-Card & Desktop View */}
       <Table
         columns={columns}
         data={orders}
         keyExtractor={(row) => row.id}
         isLoading={isLoading}
+        emptyText="No sales orders found."
         onRowClick={(row) => navigate(`/sales-orders/${row.id}`)}
+        renderMobileCard={(row) => (
+          <div className="space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="font-mono font-bold text-sm text-blue-600 dark:text-blue-400">
+                {row.order_number}
+              </span>
+              <Badge status={row.status} size="sm" />
+            </div>
+            <div className="flex items-center justify-between text-xs">
+              <p className="font-bold text-slate-900 dark:text-slate-100 truncate max-w-[200px]">
+                {row.party?.party_name || 'Direct Customer'}
+              </p>
+              <Badge status={row.priority} size="sm" />
+            </div>
+            <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-num pt-1.5 border-t border-slate-100 dark:border-slate-800/80">
+              <span>Required: <strong className="text-amber-600 dark:text-amber-400 font-bold">{row.required_date}</strong></span>
+              <span className="font-bold text-slate-900 dark:text-slate-100 text-sm">
+                {row.total_quantity} <span className="text-xs font-normal text-slate-500">Sheets</span>
+              </span>
+            </div>
+          </div>
+        )}
         pagination={
           data?.pagination
             ? {
@@ -250,7 +273,7 @@ export const SalesOrdersPage: React.FC = () => {
                 pageSize: data.pagination.page_size,
                 total: data.pagination.total,
                 totalPages: data.pagination.total_pages,
-                onPageChange: setPage,
+                onPageChange: (newPage) => setPage(newPage),
               }
             : undefined
         }
