@@ -30,7 +30,8 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
     # CORS
-    BACKEND_CORS_ORIGINS: Union[List[str], str] = [
+    BACKEND_CORS_ORIGINS: List[str] = [
+        "https://fixoboard-frontend.onrender.com",
         "http://localhost:3000",
         "http://localhost:5173",
         "http://localhost:8000",
@@ -68,19 +69,8 @@ class Settings(BaseSettings):
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     @classmethod
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
-        if isinstance(v, str):
-            v_stripped = v.strip()
-            if v_stripped.startswith("[") and v_stripped.endswith("]"):
-                import json
-                try:
-                    return json.loads(v_stripped)
-                except Exception:
-                    pass
-            # Split comma-separated string
-            return [origin.strip() for origin in v_stripped.split(",") if origin.strip()]
-        elif isinstance(v, (list, set)):
-            return list(v)
-        return [
+        default_origins = [
+            "https://fixoboard-frontend.onrender.com",
             "http://localhost:3000",
             "http://localhost:5173",
             "http://localhost:8000",
@@ -88,6 +78,31 @@ class Settings(BaseSettings):
             "http://127.0.0.1:5173",
             "http://127.0.0.1:8000",
         ]
+        if isinstance(v, str):
+            v_stripped = v.strip()
+            if not v_stripped:
+                return default_origins
+            if v_stripped.startswith("[") and v_stripped.endswith("]"):
+                import json
+                try:
+                    parsed = json.loads(v_stripped)
+                    if isinstance(parsed, list):
+                        return [str(origin).strip().rstrip('/') for origin in parsed if str(origin).strip()]
+                except Exception:
+                    pass
+            # Split comma-separated string and clean trailing slashes
+            origins = [origin.strip().rstrip('/') for origin in v_stripped.split(",") if origin.strip()]
+            for def_o in default_origins:
+                if def_o not in origins:
+                    origins.append(def_o)
+            return origins
+        elif isinstance(v, (list, set, tuple)):
+            origins = [str(origin).strip().rstrip('/') for origin in v if str(origin).strip()]
+            for def_o in default_origins:
+                if def_o not in origins:
+                    origins.append(def_o)
+            return origins
+        return default_origins
 
     @field_validator("JWT_SECRET")
     @classmethod
