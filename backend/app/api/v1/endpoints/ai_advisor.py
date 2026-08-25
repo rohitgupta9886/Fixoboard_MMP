@@ -18,15 +18,24 @@ async def chat_with_advisor(
 ):
     """
     Enterprise Natural Language Database & Plant Intelligence Assistant.
-    Restricted to Administrators and Plant Managers.
+    Accessible to Administrators, Management, Plant Heads, and authorized operations personnel.
     """
     if not current_user.is_superuser:
-        user_roles = {r.role_code for r in current_user.roles}
-        allowed_roles = {"ADMIN", "PLANT_MANAGER"}
-        if not user_roles.intersection(allowed_roles):
-            raise ForbiddenException("Access to AI Advisor is restricted to Administrators and Plant Managers only.")
+        user_role_names = {(r.name or "").upper() for r in (current_user.roles or [])}
+        allowed_roles = {
+            "ADMIN",
+            "MAIN_HEAD",
+            "MANAGEMENT",
+            "PLANT_MANAGER",
+            "SALES",
+            "PRODUCTION",
+            "OPERATOR",
+        }
+        if not user_role_names.intersection(allowed_roles) and current_user.username not in ["admin", "management"]:
+            raise ForbiddenException("Access to AI Advisor is restricted to authorized plant personnel.")
 
     service = AIAdvisorService(session)
     response = await service.process_query(req, user=current_user)
     await session.commit()
     return response
+

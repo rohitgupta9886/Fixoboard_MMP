@@ -472,7 +472,7 @@ INSTRUCTIONS FOR OUTPUT FORMATTING & READABILITY:
 """
         primary_model = settings.GEMINI_MODEL or "gemini-2.5-flash"
         candidate_models = [primary_model]
-        for fallback_m in ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.5-pro", "gemini-1.5-flash"]:
+        for fallback_m in ["gemini-flash-latest", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-pro-latest", "gemini-1.5-flash"]:
             if fallback_m not in candidate_models:
                 candidate_models.append(fallback_m)
         
@@ -489,7 +489,7 @@ INSTRUCTIONS FOR OUTPUT FORMATTING & READABILITY:
                         }
                     ]
                 }
-                async with httpx.AsyncClient(timeout=6.0) as client:
+                async with httpx.AsyncClient(timeout=4.0) as client:
                     resp = await client.post(url, json=payload)
                     if resp.status_code == 200:
                         data = resp.json()
