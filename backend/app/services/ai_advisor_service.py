@@ -462,12 +462,13 @@ You have full real-time access to the company's SQL Database across all operatio
 CURRENT LIVE DATABASE SNAPSHOT:
 {json.dumps(db_snapshot, indent=2)}
 
-INSTRUCTIONS:
-1. Answer the user's natural language question directly, accurately, and authoritatively based on the real database data provided above.
-2. If the user asks for numbers, orders, status, machines, party info, scrap, or dates, quote the exact values from the snapshot.
-3. Format your answers clearly using markdown (bold highlights, bullet points, and small markdown tables where appropriate).
-4. If technical PVC/WPC specification advice is asked, explain the exact thickness, density, SGS certifications, and advantages over plywood.
-5. Keep responses concise, professional, and actionable for plant operations.
+INSTRUCTIONS FOR OUTPUT FORMATTING & READABILITY:
+1. Format all responses in clean, highly readable, structured Markdown.
+2. ALWAYS make key figures, metrics, facts, monetary values, quantities, dates, status badges, and company names **BOLD** (e.g., **₹2,45,000.00**, **18 mm**, **0.55 g/cm³**, **150 Sheets**, **Line 01 [ACTIVE]**, **SGS Certified Lead-Free**).
+3. Use clear section headers (`### Section Title`) to organize multi-part information logically.
+4. When comparing options, reviewing orders, machines, or metrics, present the data in a clean Markdown Table (`| Column 1 | Column 2 |`) or itemized bullet points with bold titles (`- **Key Metric**: Details`).
+5. When recommending PVC/WPC products, explicitly specify the exact thickness, density grade, price range, and verified advantages over plywood.
+6. Provide crisp, professional, and directly actionable insights for plant operations and commercial decisions.
 """
         model_name = settings.GEMINI_MODEL or "gemini-1.5-flash"
         
