@@ -17,6 +17,9 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 
+import { useQuery } from '@tanstack/react-query';
+import { apiClient } from '../../api/client';
+
 interface HeaderProps {
   onOpenMobileNav: () => void;
   onOpenCommandPalette: () => void;
@@ -36,7 +39,22 @@ export const Header: React.FC<HeaderProps> = ({
   const location = useLocation();
   const navigate = useNavigate();
 
-  const canAccessAiAdvisor = hasRole('ADMIN') || hasRole('PLANT_MANAGER');
+  // Polling live notifications count
+  const { data: notificationsData } = useQuery({
+    queryKey: ['notifications-live'],
+    queryFn: () => apiClient.getNotifications(20),
+    refetchInterval: 15000,
+  });
+
+  const unreadCount = (notificationsData?.data || []).length;
+
+  const canAccessAiAdvisor =
+    hasRole('ADMIN') ||
+    hasRole('MAIN_HEAD') ||
+    hasRole('MANAGEMENT') ||
+    hasRole('PLANT_MANAGER') ||
+    user?.username === 'management' ||
+    user?.username === 'admin';
 
   // Generate breadcrumb from path
   const pathParts = location.pathname.split('/').filter(Boolean);
@@ -123,10 +141,16 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           onClick={onOpenNotificationDrawer}
           className="relative p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-blue-600 transition-colors"
-          title="Notifications"
+          title={`Notifications (${unreadCount} live updates)`}
         >
           <Bell className="w-4 h-4" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-blue-600 ring-2 ring-white dark:ring-slate-900" />
+          {unreadCount > 0 ? (
+            <span className="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-1 rounded-full bg-rose-600 text-white text-[9px] font-black flex items-center justify-center ring-2 ring-white dark:ring-slate-900 animate-pulse">
+              {unreadCount > 9 ? '9+' : unreadCount}
+            </span>
+          ) : (
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900" />
+          )}
         </button>
 
         {/* Theme Toggle */}

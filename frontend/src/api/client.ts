@@ -118,6 +118,10 @@ class ApiClient {
     return this.get<ApiResponse<any>>('/dashboards');
   }
 
+  getNotifications(limit: number = 30) {
+    return this.get<ApiResponse<any[]>>('/notifications', { limit });
+  }
+
   getPublicDashboardSummary() {
     return this.get<ApiResponse<any>>('/dashboards/public');
   }

@@ -21,8 +21,14 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   onOpenAiAdvisor,
 }) => {
   const location = useLocation();
-  const { hasRole } = useAuth();
-  const canAccessAi = hasRole('ADMIN') || hasRole('PLANT_MANAGER');
+  const { user, hasRole } = useAuth();
+  const canAccessAi =
+    hasRole('ADMIN') ||
+    hasRole('MAIN_HEAD') ||
+    hasRole('MANAGEMENT') ||
+    hasRole('PLANT_MANAGER') ||
+    user?.username === 'management' ||
+    user?.username === 'admin';
 
   const navItems = [
     {
